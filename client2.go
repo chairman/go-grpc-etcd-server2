@@ -2,10 +2,11 @@ package main
 
 import (
 	"go-grpc-etcd-server/com/discover"
+	"go-grpc-etcd-server/com/lb"
 	pb "go-grpc-etcd-server/com/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer/roundrobin"
+	//"google.golang.org/grpc/balancer/roundrobin"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
 	"log"
@@ -18,7 +19,7 @@ func main() {
 	resolver.Register(etcdResolverBuilder)
 
 	// 使用自带的DNS解析器和负载均衡实现方式
-	conn, err := grpc.Dial("etcd:///", grpc.WithBalancerName(roundrobin.Name), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("etcd:///", grpc.WithBalancerName(lb.Name), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}
