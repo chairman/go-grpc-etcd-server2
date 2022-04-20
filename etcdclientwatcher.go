@@ -18,28 +18,27 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	
+
 	key := "/ns/service"
 
 	// 监听变化
-	go watcher(client,key)
+	go watcher2(client, key)
 
 	value := "127.0.0.1:800"
 	ctx := context.Background()
 
 	// 每隔2秒重新PUT一次
-	for i:=0 ;i<100;i++ {
-		time.Sleep(2*time.Second)
+	for i := 0; i < 100; i++ {
+		time.Sleep(2 * time.Second)
 		_, err := client.Put(ctx, key, value+strconv.Itoa(i))
 		if err != nil {
-			log.Printf("put error %v",err)
+			log.Printf("put error %v", err)
 		}
 	}
 
 }
 
-
-func watcher(client *clientv3.Client,key string) {
+func watcher2(client *clientv3.Client, key string) {
 
 	// 监听这个chan
 	watchChan := client.Watch(context.Background(), key)
@@ -47,15 +46,14 @@ func watcher(client *clientv3.Client,key string) {
 	for watchResponse := range watchChan {
 
 		for _, event := range watchResponse.Events {
-			fmt.Printf("Type:%s,Key:%s,Value:%s\n",event.Type,event.Kv.Key,event.Kv.Value)
+			fmt.Printf("Type:%s,Key:%s,Value:%s\n", event.Type, event.Kv.Key, event.Kv.Value)
 			/**
 			Type:PUT,Key:/ns/service,Value:127.0.0.1:8000
 			Type:PUT,Key:/ns/service,Value:127.0.0.1:8001
 			Type:PUT,Key:/ns/service,Value:127.0.0.1:8002
 			Type:PUT,Key:/ns/service,Value:127.0.0.1:8003
 			...
-			 */
+			*/
 		}
 	}
 }
-
